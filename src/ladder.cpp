@@ -24,26 +24,25 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
         }
         return difference <= 1;
     } else {
-        // levenshtien 
-        vector<vector<int>> subproblems(m + 1, vector<int>(n + 1));
-
-        for (int i = 0; i <= m; i++) 
-            subproblems[i][0] = i;
-        for (int j = 0; j <= n; j++) 
-            subproblems[0][j] = j; 
-
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (str1[i - 1] == str2[j - 1])
-                    subproblems[i][j] = subproblems[i - 1][j - 1];
-                else
-                    subproblems[i][j] = 1 + min({subproblems[i][j - 1],  
-                                    subproblems[i - 1][j],   
-                                    subproblems[i - 1][j - 1]});
+        // levenshtien optimized
+        vector<int> prev(n+1,0), curr(n+1,0);
+        for(int j=0;j<n+1;j++) prev[j]=j;
+        for(int i=1;i<n+1;i++){
+            curr[0]=i;
+            for(int j=1;j<n+1;j++){
+                if(str1[i-1]==str2[j-1]){
+                    curr[j]=prev[j-1];
+                }
+                else{
+                    int insertion=1+curr[j-1];
+                    int deletion=1+prev[j];
+                    int replacement=1+prev[j-1];
+                    curr[j]=min(insertion,min(deletion,replacement));
+                }
             }
+            prev=curr;
         }
-
-        return subproblems[m][n] <= d;
+        return prev[n];
     }
 }     
 
