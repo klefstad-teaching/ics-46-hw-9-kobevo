@@ -22,7 +22,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
                     return false;
             }
         }
-        return difference == 1;
+        return difference <= 1;
     } else {
         // levenshtien 
         vector<vector<int>> subproblems(m + 1, vector<int>(n + 1));
@@ -76,7 +76,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     new_ladder.push_back(word);
 
                     if (word == end_word) {
-                        print_word_ladder(new_ladder);
+                        // print_word_ladder(new_ladder);
                         return new_ladder;
                     }
                     
