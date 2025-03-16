@@ -12,26 +12,40 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
 
     if (abs(m - n) > d) return false;
 
-    vector<vector<int>> subproblems(m + 1, vector<int>(n + 1));
-
-    for (int i = 0; i <= m; i++) 
-        subproblems[i][0] = i;
-    for (int j = 0; j <= n; j++) 
-        subproblems[0][j] = j; 
-
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (str1[i - 1] == str2[j - 1])
-                subproblems[i][j] = subproblems[i - 1][j - 1];
-            else
-                subproblems[i][j] = 1 + min({subproblems[i][j - 1],  
-                                 subproblems[i - 1][j],   
-                                 subproblems[i - 1][j - 1]});
+    // optimized approach for just m == n
+    if (m == n) {
+        int difference = 0;
+        for (int i = 0; i < m; ++i) {
+            if (str1[i] != str2[i]) {
+                ++difference;
+                if (difference > 1) 
+                    return false;
+            }
         }
-    }
+        return difference == 1;
+    } else {
+        // levenshtien 
+        vector<vector<int>> subproblems(m + 1, vector<int>(n + 1));
 
-    return subproblems[m][n] <= d;
-}
+        for (int i = 0; i <= m; i++) 
+            subproblems[i][0] = i;
+        for (int j = 0; j <= n; j++) 
+            subproblems[0][j] = j; 
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (str1[i - 1] == str2[j - 1])
+                    subproblems[i][j] = subproblems[i - 1][j - 1];
+                else
+                    subproblems[i][j] = 1 + min({subproblems[i][j - 1],  
+                                    subproblems[i - 1][j],   
+                                    subproblems[i - 1][j - 1]});
+            }
+        }
+
+        return subproblems[m][n] <= d;
+    }
+}     
 
 bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
@@ -39,6 +53,7 @@ bool is_adjacent(const string& word1, const string& word2) {
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     if (word_list.find(end_word) == word_list.end()) return vector<string>();
+    if (begin_word == end_word) return vector<string>();
 
     unordered_set<string> visited;
     visited.insert(begin_word);
@@ -60,15 +75,16 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     auto new_ladder = ladder;
                     new_ladder.push_back(word);
 
-                    if (word == end_word)
+                    if (word == end_word) {
+                        print_word_ladder(new_ladder);
                         return new_ladder;
+                    }
                     
                     ladder_queue.push(new_ladder);
                 }
             }
         }
     }
-    
     return vector<string>();
 }
 
