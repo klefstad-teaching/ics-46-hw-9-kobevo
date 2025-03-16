@@ -27,7 +27,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
         // levenshtien optimized
         vector<int> prev(n+1,0), curr(n+1,0);
         for(int j=0;j<n+1;j++) prev[j]=j;
-        for(int i=1;i<n+1;i++){
+        for(int i=1;i<m+1;i++){
             curr[0]=i;
             for(int j=1;j<n+1;j++){
                 if(str1[i-1]==str2[j-1]){
@@ -42,7 +42,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
             }
             prev=curr;
         }
-        return prev[n] <= 1;
+        return prev[n] <= d;
     }
 }     
 
