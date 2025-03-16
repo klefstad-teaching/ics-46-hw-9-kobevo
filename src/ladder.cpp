@@ -42,7 +42,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
             }
             prev=curr;
         }
-        return prev[n];
+        return prev[n] <= 1;
     }
 }     
 
